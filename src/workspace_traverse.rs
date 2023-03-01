@@ -4,6 +4,7 @@ use std::path::PathBuf;
 impl Workspace {
     pub fn files(&self) -> Vec<PathBuf> {
         walkdir::WalkDir::new(&self.path)
+            .min_depth(1)
             .into_iter()
             .filter(|e| {
                 e.is_ok()
@@ -25,7 +26,6 @@ mod tests {
     use super::*;
 
     #[test]
-    // TODO: Tests be failing 😭
     fn test_files() {
         let workspace = Workspace {
             name: "example workspace".to_string(),
@@ -33,6 +33,7 @@ mod tests {
         };
 
         let files = workspace.files();
+        println!("{files:#?}");
         assert_eq!(files.len(), 2);
     }
 }
