@@ -5,3 +5,4 @@
 // Ways to query all the files in a given workspace
 
 pub mod workspace;
+pub mod workspace_traverse;
