@@ -1,5 +1,6 @@
 [package]
 name = "neorg-directory-manager"
+crate-type = ["cdylib"]
 version = "0.1.0"
 edition = "2021"
 
