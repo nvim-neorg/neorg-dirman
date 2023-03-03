@@ -12,3 +12,5 @@ typedef struct Workspace Workspace;
 struct Workspace *create_workspace(const char *name, const char *path);
 
 void destroy_workspace(struct Workspace *workspace);
+
+const char *const *workspace_files(const struct Workspace *workspace);
