@@ -13,3 +13,18 @@ walkdir = "2.3.2"
 
 [build-dependencies]
 cbindgen = "0.24.3"
+
+[profile.release_nostrip]
+inherits = "release"
+opt-level = "s"
+lto = "thin"
+codegen-units = 1
+debug = false
+strip=false
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+debug = false
+strip=true
