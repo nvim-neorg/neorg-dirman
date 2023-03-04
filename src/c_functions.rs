@@ -24,8 +24,12 @@ pub unsafe extern "C" fn create_workspace(
 
 #[no_mangle]
 // TODO: Is this return type okay? Any better way of signaling an array of strings?
-pub unsafe extern "C" fn workspace_files(workspace: &Workspace) -> *const *const c_char {
-    let files = workspace.files();
+pub unsafe extern "C" fn workspace_files(workspace: *const Workspace) -> *const *const c_char {
+    if workspace.is_null() {
+        return std::ptr::null_mut();
+    }
+
+    let files = (&*workspace).files();
 
     files
         .into_iter()
