@@ -9,8 +9,20 @@
 
 typedef struct Workspace Workspace;
 
+typedef struct CString {
+  const char *str;
+  size_t len;
+} CString;
+
+typedef struct FileList {
+  const struct CString *data;
+  size_t length;
+} FileList;
+
 struct Workspace *create_workspace(const char *name, const char *path);
+
+void destroy_files(struct FileList *files);
 
 void destroy_workspace(struct Workspace *workspace);
 
-const char *const *workspace_files(const struct Workspace *workspace);
+struct FileList *workspace_files(const struct Workspace *workspace);
