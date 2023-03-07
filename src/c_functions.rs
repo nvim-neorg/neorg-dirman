@@ -1,5 +1,17 @@
 use crate::workspace::Workspace;
-use std::ffi::c_char;
+use std::{ffi::c_char, mem::ManuallyDrop};
+
+#[repr(C)]
+pub struct CString {
+    str: *const c_char,
+    len: usize,
+}
+
+#[repr(C)]
+pub struct FileList {
+    pub data: *const CString,
+    pub length: usize,
+}
 
 #[no_mangle]
 pub unsafe extern "C" fn create_workspace(
@@ -19,26 +31,50 @@ pub unsafe extern "C" fn create_workspace(
         path: path.to_string_lossy().to_string().into(),
     };
 
-    Box::into_raw(Box::new(workspace))
+    Box::into_raw(workspace.into())
 }
 
 #[no_mangle]
-// TODO: Is this return type okay? Any better way of signaling an array of strings?
-pub extern "C" fn workspace_files(workspace: *const Workspace) -> *const *const c_char {
+// TODO: Indexing item 0 of the returned array here yields a segfault. Any idea why?
+pub unsafe extern "C" fn workspace_files(workspace: *const Workspace) -> *mut FileList {
     if workspace.is_null() {
         return std::ptr::null_mut();
     }
 
-    let files = unsafe { (&*workspace).files() };
+    let files = ManuallyDrop::new(
+        (*workspace)
+            .files()
+            .into_iter()
+            .map(|path| path.to_string_lossy().into_owned())
+            .collect::<Vec<String>>(),
+    );
 
-    files
-        .into_iter()
-        .map(|path| path.to_string_lossy().as_ptr() as *const c_char)
-        .collect::<Vec<*const c_char>>()
-        .as_ptr()
+    let file_list = FileList {
+        data: files
+            .iter()
+            .map(|file| CString {
+                str: file.as_ptr() as *const c_char,
+                len: file.len(),
+            })
+            .collect::<Vec<CString>>()
+            .as_ptr(),
+        length: files.len(),
+    };
+
+    Box::into_raw(file_list.into())
 }
 
 #[no_mangle]
-pub extern "C" fn destroy_workspace(workspace: &mut Workspace) {
-    drop(workspace);
+pub unsafe extern "C" fn destroy_files(files: *mut FileList) {
+    if !files.is_null() {
+        drop(Box::from_raw(files));
+        // drop(files) ?? This is probably required
+    }
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn destroy_workspace(workspace: *mut Workspace) {
+    if !workspace.is_null() {
+        drop(Box::from_raw(workspace));
+    }
 }
