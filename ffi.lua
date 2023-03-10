@@ -1,15 +1,10 @@
 local ffi = require("ffi")
 
-ffi.cdef [[
+ffi.cdef([[
 typedef struct Workspace Workspace;
 
-typedef struct CString {
-  const char *str;
-  size_t len;
-} CString;
-
 typedef struct FileList {
-  const struct CString *data;
+  char const* const* data;
   size_t length;
 } FileList;
 
@@ -20,7 +15,7 @@ void destroy_files(struct FileList *files);
 void destroy_workspace(struct Workspace *workspace);
 
 struct FileList *workspace_files(const struct Workspace *workspace);
-]]
+]])
 
 local neorg_lib = ffi.load("/home/user/...path/target/release/libneorg_directory_manager.so")
 
@@ -30,12 +25,9 @@ local files = neorg_lib.workspace_files(workspace)
 local len = tonumber(files.length)
 print(len)
 
-print(files.data[0].len)
--- Why does this segfault?
-print(ffi.string(files.data[0].str, files.data[0].len))
+print(ffi.string(files.data[0]))
 
--- This is fine though
-print(ffi.string(files.data[1].str, files.data[1].len))
+print(ffi.string(files.data[1]))
 
 neorg_lib.destroy_files(files)
 neorg_lib.destroy_workspace(workspace)

@@ -1,15 +1,12 @@
 use crate::workspace::Workspace;
-use std::{ffi::c_char, mem::ManuallyDrop};
-
-#[repr(C)]
-pub struct CString {
-    str: *const c_char,
-    len: usize,
-}
+use std::{
+    ffi::{c_char, CString},
+    mem::ManuallyDrop,
+};
 
 #[repr(C)]
 pub struct FileList {
-    pub data: *const CString,
+    pub data: *const *const char,
     pub length: usize,
 }
 
@@ -45,19 +42,16 @@ pub unsafe extern "C" fn workspace_files(workspace: *const Workspace) -> *mut Fi
         (*workspace)
             .files()
             .into_iter()
-            .map(|path| path.to_string_lossy().into_owned())
-            .collect::<Vec<String>>(),
+            .map(|path| {
+                CString::new(path.to_string_lossy().into_owned())
+                    .unwrap()
+                    .into_raw() as *const char
+            })
+            .collect::<Vec<*const char>>(),
     );
 
     let file_list = FileList {
-        data: files
-            .iter()
-            .map(|file| CString {
-                str: file.as_ptr() as *const c_char,
-                len: file.len(),
-            })
-            .collect::<Vec<CString>>()
-            .as_ptr(),
+        data: files.as_ptr(),
         length: files.len(),
     };
 

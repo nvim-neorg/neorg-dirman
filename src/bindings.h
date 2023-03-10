@@ -9,13 +9,8 @@
 
 typedef struct Workspace Workspace;
 
-typedef struct CString {
-  const char *str;
-  size_t len;
-} CString;
-
 typedef struct FileList {
-  const struct CString *data;
+  const uint32_t *const *data;
   size_t length;
 } FileList;
 
