@@ -1,6 +1,6 @@
 [package]
 name = "neorg-directory-manager"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2021"
 
 [lib]
@@ -19,10 +19,10 @@ inherits = "release"
 opt-level = "s"
 lto = "thin"
 debug = false
-strip=false
+strip = false
 
 [profile.release]
 opt-level = "s"
 lto = true
 debug = false
-strip=true
+strip = true
