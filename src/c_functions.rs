@@ -8,6 +8,7 @@ use std::{
 pub struct FileList {
     pub data: *const *const c_char,
     pub length: usize,
+    pub _capacity: usize,
 }
 
 #[no_mangle]
@@ -53,6 +54,7 @@ pub unsafe extern "C" fn workspace_files(workspace: *const Workspace) -> *mut Fi
     let file_list = FileList {
         data: files.as_ptr(),
         length: files.len(),
+        _capacity: files.capacity(),
     };
 
     Box::into_raw(file_list.into())
@@ -61,8 +63,7 @@ pub unsafe extern "C" fn workspace_files(workspace: *const Workspace) -> *mut Fi
 #[no_mangle]
 pub unsafe extern "C" fn destroy_files(files: *mut FileList) {
     if !files.is_null() {
-        drop(Box::from_raw(files));
-        // drop(files) ?? This is probably required
+        drop(Vec::from_raw_parts(files, (*files).length, (*files)._capacity));
     }
 }
 

@@ -12,6 +12,7 @@ typedef struct Workspace Workspace;
 typedef struct FileList {
   const char *const *data;
   size_t length;
+  size_t _capacity;
 } FileList;
 
 struct Workspace *create_workspace(const char *name, const char *path);

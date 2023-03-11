@@ -4,8 +4,9 @@ ffi.cdef([[
 typedef struct Workspace Workspace;
 
 typedef struct FileList {
-  char const* const* data;
+  const char *const *data;
   size_t length;
+  size_t _capacity;
 } FileList;
 
 struct Workspace *create_workspace(const char *name, const char *path);
