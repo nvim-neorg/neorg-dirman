@@ -1,7 +1,11 @@
 [package]
 name = "neorg-dirman"
+description = "A cross-platform implementation of Dirman in Rust."
 version = "0.1.0"
 edition = "2021"
+license = "GPLv3"
+license_file = "LICENSE"
+repository = "https://github.com/nvim-neorg/neorg-dirman"
 
 [lib]
 crate-type = ["lib", "cdylib"]
