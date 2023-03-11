@@ -119,4 +119,22 @@ mod tests {
             WorkspaceManager::new(vec![&workspace1, &workspace2], &workspace1.name).expect("");
         assert_eq!(workspace_manager.current_workspace, &workspace1.name);
     }
+
+    #[test]
+    fn test_workspace_manager_current_workspace() {
+        let workspace1 = Workspace {
+            name: "example name".to_string(),
+            path: "~/some/path".into(),
+        };
+
+        let workspace2 = Workspace {
+            name: "another example name".to_string(),
+            path: "~/another/path".into(),
+        };
+
+        let mut workspace_manager = WorkspaceManager::new(vec![&workspace1, &workspace2], &workspace1.name).expect("Workspace 1 not found!");
+        workspace_manager.set_current_workspace(&workspace2.name).expect("Unable to set the current workspace");
+
+        assert_eq!(&workspace_manager.get_current_workspace().name, &workspace2.name);
+    }
 }
