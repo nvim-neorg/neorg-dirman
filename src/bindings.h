@@ -10,7 +10,7 @@
 typedef struct Workspace Workspace;
 
 typedef struct FileList {
-  const uint32_t *const *data;
+  const char *const *data;
   size_t length;
 } FileList;
 

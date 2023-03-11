@@ -6,7 +6,7 @@ use std::{
 
 #[repr(C)]
 pub struct FileList {
-    pub data: *const *const char,
+    pub data: *const *const c_char,
     pub length: usize,
 }
 
@@ -45,9 +45,9 @@ pub unsafe extern "C" fn workspace_files(workspace: *const Workspace) -> *mut Fi
             .map(|path| {
                 CString::new(path.to_string_lossy().into_owned())
                     .unwrap()
-                    .into_raw() as *const char
+                    .into_raw() as *const c_char
             })
-            .collect::<Vec<*const char>>(),
+            .collect::<Vec<*const c_char>>(),
     );
 
     let file_list = FileList {
