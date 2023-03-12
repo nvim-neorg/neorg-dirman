@@ -86,3 +86,41 @@ pub unsafe extern "C" fn destroy_workspace(workspace: *mut Workspace) {
 
     drop(Box::from_raw(workspace));
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_workspace_ffi_boundary() {
+        unsafe {
+            let name = CString::new("test").unwrap().into_raw();
+            let path = CString::new("test/example_workspace/").unwrap().into_raw();
+
+            let workspace = create_workspace(name, path);
+
+            destroy_workspace(workspace);
+
+            drop(Box::from_raw(name));
+            drop(Box::from_raw(path));
+        }
+    }
+
+    #[test]
+    fn test_workspace_files_ffi_boundary() {
+        unsafe {
+            let name = CString::new("test").unwrap().into_raw();
+            let path = CString::new("test/example_workspace/").unwrap().into_raw();
+
+            let workspace = create_workspace(name, path);
+
+            let files = workspace_files(workspace);
+
+            destroy_files(files);
+            destroy_workspace(workspace);
+
+            drop(Box::from_raw(name));
+            drop(Box::from_raw(path));
+        }
+    }
+}
