@@ -35,6 +35,8 @@ pub unsafe extern "C" fn create_workspace(
 #[no_mangle]
 pub unsafe extern "C" fn workspace_files(workspace: *const Workspace) -> *mut FileList {
     if workspace.is_null() {
+        // TODO: should we panic here? Passing a null ptr to this function does not make sense
+        // If the caller tries to dereference the null ptr we return, the program will crash anyway
         return std::ptr::null_mut();
     }
 
@@ -62,7 +64,7 @@ pub unsafe extern "C" fn workspace_files(workspace: *const Workspace) -> *mut Fi
 #[no_mangle]
 pub unsafe extern "C" fn destroy_files(file_list: *mut FileList) {
     if file_list.is_null() {
-        // TODO: should we panic here?
+        // TODO: should we panic here? Passing a null ptr to this function does not make sense
         return;
     }
 
@@ -82,6 +84,7 @@ pub unsafe extern "C" fn destroy_files(file_list: *mut FileList) {
 #[no_mangle]
 pub unsafe extern "C" fn destroy_workspace(workspace: *mut Workspace) {
     if !workspace.is_null() {
+        // TODO: should we panic here? Passing a null ptr to this function does not make sense
         drop(Box::from_raw(workspace));
     }
 }
