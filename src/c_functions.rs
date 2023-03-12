@@ -33,7 +33,6 @@ pub unsafe extern "C" fn create_workspace(
 }
 
 #[no_mangle]
-// TODO: Indexing item 0 of the returned array here yields a segfault. Any idea why?
 pub unsafe extern "C" fn workspace_files(workspace: *const Workspace) -> *mut FileList {
     if workspace.is_null() {
         return std::ptr::null_mut();
