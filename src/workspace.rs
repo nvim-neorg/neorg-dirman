@@ -132,9 +132,16 @@ mod tests {
             path: "~/another/path".into(),
         };
 
-        let mut workspace_manager = WorkspaceManager::new(vec![&workspace1, &workspace2], &workspace1.name).expect("Workspace 1 not found!");
-        workspace_manager.set_current_workspace(&workspace2.name).expect("Unable to set the current workspace");
+        let mut workspace_manager =
+            WorkspaceManager::new(vec![&workspace1, &workspace2], &workspace1.name)
+                .expect("Workspace 1 not found!");
+        workspace_manager
+            .set_current_workspace(&workspace2.name)
+            .expect("Unable to set the current workspace");
 
-        assert_eq!(&workspace_manager.get_current_workspace().name, &workspace2.name);
+        assert_eq!(
+            &workspace_manager.get_current_workspace().name,
+            &workspace2.name
+        );
     }
 }
