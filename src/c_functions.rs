@@ -61,9 +61,22 @@ pub unsafe extern "C" fn workspace_files(workspace: *const Workspace) -> *mut Fi
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn destroy_files(files: *mut FileList) {
-    if !files.is_null() {
-        drop(Vec::from_raw_parts(files, (*files).length, (*files)._capacity));
+pub unsafe extern "C" fn destroy_files(file_list: *mut FileList) {
+    if file_list.is_null() {
+        // TODO: should we panic here?
+        return;
+    }
+
+    let file_list = Box::from_raw(file_list);
+
+    let files_path_ptrs: Vec<*mut c_char> = Vec::from_raw_parts(
+        file_list.data as *mut *mut c_char,
+        file_list.length,
+        file_list._capacity,
+    );
+
+    for file_path_ptr in files_path_ptrs {
+        drop(CString::from_raw(file_path_ptr));
     }
 }
 
