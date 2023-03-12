@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.1](https://github.com/nvim-neorg/neorg-dirman/compare/v0.1.0...v0.1.1) (2023-03-12)
+
+
+### Bug Fixes
+
+* `destroy_files` function memory leak ([#4](https://github.com/nvim-neorg/neorg-dirman/issues/4)) ([92f028f](https://github.com/nvim-neorg/neorg-dirman/commit/92f028fa6d8b57c35cda5e61f37869b7bd8477fe))
+* **ci:** check out the repository before doing anything else ([9196b59](https://github.com/nvim-neorg/neorg-dirman/commit/9196b597d6b162c51adc9cc84bb7015a216c8b81))
+
 ## 0.1.0 (2023-03-11)
 
 
