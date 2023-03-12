@@ -16,9 +16,8 @@ pub unsafe extern "C" fn create_workspace(
     name: *const c_char,
     path: *const c_char,
 ) -> *mut Workspace {
-    if name.is_null() || path.is_null() {
-        return std::ptr::null_mut();
-    }
+    assert!(!name.is_null(), "Parameter `name` must not be `null`!");
+    assert!(!path.is_null(), "Parameter `path` must not be `null`!");
 
     let (name, path) = (
         std::ffi::CStr::from_ptr(name),
@@ -33,11 +32,11 @@ pub unsafe extern "C" fn create_workspace(
 }
 
 #[no_mangle]
-// TODO: Indexing item 0 of the returned array here yields a segfault. Any idea why?
 pub unsafe extern "C" fn workspace_files(workspace: *const Workspace) -> *mut FileList {
-    if workspace.is_null() {
-        return std::ptr::null_mut();
-    }
+    assert!(
+        !workspace.is_null(),
+        "Parameter `workspace` must not be `null`!"
+    );
 
     let files = ManuallyDrop::new(
         (*workspace)
@@ -61,15 +60,29 @@ pub unsafe extern "C" fn workspace_files(workspace: *const Workspace) -> *mut Fi
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn destroy_files(files: *mut FileList) {
-    if !files.is_null() {
-        drop(Vec::from_raw_parts(files, (*files).length, (*files)._capacity));
+pub unsafe extern "C" fn destroy_files(file_list: *mut FileList) {
+    if file_list.is_null() {
+        return;
+    }
+
+    let file_list = Box::from_raw(file_list);
+
+    let file_path_ptrs: Vec<*mut c_char> = Vec::from_raw_parts(
+        file_list.data as *mut *mut c_char,
+        file_list.length,
+        file_list._capacity,
+    );
+
+    for file_path_ptr in file_path_ptrs {
+        drop(CString::from_raw(file_path_ptr));
     }
 }
 
 #[no_mangle]
 pub unsafe extern "C" fn destroy_workspace(workspace: *mut Workspace) {
-    if !workspace.is_null() {
-        drop(Box::from_raw(workspace));
+    if workspace.is_null() {
+        return;
     }
+
+    drop(Box::from_raw(workspace));
 }
