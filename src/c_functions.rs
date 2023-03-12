@@ -16,9 +16,8 @@ pub unsafe extern "C" fn create_workspace(
     name: *const c_char,
     path: *const c_char,
 ) -> *mut Workspace {
-    if name.is_null() || path.is_null() {
-        return std::ptr::null_mut();
-    }
+    assert!(!name.is_null(), "Parameter `name` must not be `null`!");
+    assert!(!path.is_null(), "Parameter `path` must not be `null`!");
 
     let (name, path) = (
         std::ffi::CStr::from_ptr(name),
@@ -34,11 +33,10 @@ pub unsafe extern "C" fn create_workspace(
 
 #[no_mangle]
 pub unsafe extern "C" fn workspace_files(workspace: *const Workspace) -> *mut FileList {
-    if workspace.is_null() {
-        // TODO: should we panic here? Passing a null ptr to this function does not make sense
-        // If the caller tries to dereference the null ptr we return, the program will crash anyway
-        return std::ptr::null_mut();
-    }
+    assert!(
+        !workspace.is_null(),
+        "Parameter `workspace` must not be `null`!"
+    );
 
     let files = ManuallyDrop::new(
         (*workspace)
@@ -64,7 +62,6 @@ pub unsafe extern "C" fn workspace_files(workspace: *const Workspace) -> *mut Fi
 #[no_mangle]
 pub unsafe extern "C" fn destroy_files(file_list: *mut FileList) {
     if file_list.is_null() {
-        // TODO: should we panic here? Passing a null ptr to this function does not make sense
         return;
     }
 
@@ -83,8 +80,9 @@ pub unsafe extern "C" fn destroy_files(file_list: *mut FileList) {
 
 #[no_mangle]
 pub unsafe extern "C" fn destroy_workspace(workspace: *mut Workspace) {
-    if !workspace.is_null() {
-        // TODO: should we panic here? Passing a null ptr to this function does not make sense
-        drop(Box::from_raw(workspace));
+    if workspace.is_null() {
+        return;
     }
+
+    drop(Box::from_raw(workspace));
 }
