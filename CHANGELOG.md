@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/nvim-neorg/neorg-dirman/compare/v0.1.1...v0.1.2) (2023-07-31)
+
+
+### Bug Fixes
+
+* skip directories ([45f59f4](https://github.com/nvim-neorg/neorg-dirman/commit/45f59f47553d1efb7e4c5b200ad0561b4342e33a))
+
 ## [0.1.1](https://github.com/nvim-neorg/neorg-dirman/compare/v0.1.0...v0.1.1) (2023-03-12)
 
 
